@@ -8,17 +8,45 @@
 
 import UIKit
 
-class ButtonTableViewCell: UITableViewCell {
+protocol ButtonTableViewCellDelegate: AnyObject {
+    func buttonCellButtonTapped(_ sender: ButtonTableViewCell)
+}
 
+class ButtonTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var primaryLabel: UILabel!
+    @IBOutlet weak var completeButton: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
+    @IBAction func buttonTapped(_ sender: UIButton) {
+        delegate?.buttonCellButtonTapped(self)
+    }
+    
+    weak var delegate: ButtonTableViewCellDelegate?
+    
+    func updateButton(_ isComplete: Bool){
+        if isComplete {
+            completeButton.setImage(#imageLiteral(resourceName: "complete"), for: .normal)
+        } else {
+            completeButton.setImage(#imageLiteral(resourceName: "incomplete"), for: .normal)
+        }
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+        
     }
-
 }
+
+extension ButtonTableViewCell {
+    func update(with task: Task){
+        primaryLabel?.text = task.name
+        updateButton(task.isComplete)
+    }
+}
+
+
